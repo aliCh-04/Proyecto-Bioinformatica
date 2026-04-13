@@ -33,4 +33,9 @@
       <Filter>Archivos de origen</Filter>
     </ClInclude>
   </ItemGroup>
+  <ItemGroup>
+    <Text Include="secuencias.txt">
+      <Filter>Archivos de origen</Filter>
+    </Text>
+  </ItemGroup>
 </Project>
