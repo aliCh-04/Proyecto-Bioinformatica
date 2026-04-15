@@ -131,12 +131,12 @@
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>
-    <ClCompile Include="GrafoBruijn.cpp" />
+    <ClCompile Include="Ensamblador.cpp" />
     <ClCompile Include="Kmer.cpp" />
     <ClCompile Include="main.cpp" />
   </ItemGroup>
   <ItemGroup>
-    <ClInclude Include="GrafoBruijn.h" />
+    <ClInclude Include="Ensamblador.h" />
     <ClInclude Include="Kmer.h" />
   </ItemGroup>
   <ItemGroup>

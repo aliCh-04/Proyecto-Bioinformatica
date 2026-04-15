@@ -21,7 +21,7 @@
     <ClCompile Include="Kmer.cpp">
       <Filter>Archivos de origen</Filter>
     </ClCompile>
-    <ClCompile Include="GrafoBruijn.cpp">
+    <ClCompile Include="Ensamblador.cpp">
       <Filter>Archivos de origen</Filter>
     </ClCompile>
   </ItemGroup>
@@ -29,7 +29,7 @@
     <ClInclude Include="Kmer.h">
       <Filter>Archivos de origen</Filter>
     </ClInclude>
-    <ClInclude Include="GrafoBruijn.h">
+    <ClInclude Include="Ensamblador.h">
       <Filter>Archivos de origen</Filter>
     </ClInclude>
   </ItemGroup>

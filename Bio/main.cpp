@@ -2,6 +2,7 @@
 #include <fstream>
 #include <string>
 #include "Kmer.h"
+#include "Ensamblador.h"
 
 using namespace std;
 
@@ -14,7 +15,7 @@ int main() {
 	}
 
 	string linea;
-	Kmer aux(4);
+	Kmer aux(3);
 
 	while (getline(datos, linea)) {
 		aux.procesarLectura(linea);
@@ -23,13 +24,17 @@ int main() {
 	datos.close();
 
 	cout << "---ESTADO DEL GRAFO DE BRUIJN---" << endl;
-	auto dic = aux.getDiccionario();
-	for (auto [nodo, arista] : dic) {
+	auto dic = aux.getGrafo();
+	for (const auto& [nodo, arista] : dic) {
 		cout << "[" << nodo << "] ---> ";
 		for (char letra : arista) {
 			cout << letra << " ";
 		}
 		cout << endl;
 	}
+
+	cout << "---CONSTRUCCION DE LA SECUENCIA COMPLETA CON EL ENSAMBLADOR---" << endl;
+	cout << ensamblador(aux.getGrafo()) << endl;
+
 	return 0;
 }
