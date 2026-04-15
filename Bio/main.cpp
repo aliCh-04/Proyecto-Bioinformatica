@@ -33,8 +33,12 @@ int main() {
 		cout << endl;
 	}
 
-	cout << "---CONSTRUCCION DE LA SECUENCIA COMPLETA CON EL ENSAMBLADOR---" << endl;
-	cout << ensamblador(aux.getGrafo()) << endl;
+	cout << "---GENERACION DE CONTIGS---" << endl;
+	vector<string> contigs = generador(aux.getGrafo());
+	cout << "Se han generado un total de : " << contigs.size() << endl;
+	for (int i = 0; i < contigs.size(); i++) {
+		cout << "Contig " << i << ": " << contigs[i] << endl;
+	}
 
 	return 0;
 }

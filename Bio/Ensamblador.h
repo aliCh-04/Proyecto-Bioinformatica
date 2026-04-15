@@ -5,11 +5,9 @@
 #include <string>
 #include <vector>
 #include <unordered_map>
-#include <stack>
-#include <deque>
 
 using namespace std;
 
-string ensamblador(unordered_map<string, vector<char>> grafo);
+vector<string> generador(unordered_map<string, vector<char>> grafo);
 
 #endif
