@@ -27,12 +27,26 @@ int main(int argc, char* argv[]) {
 
     string linea;
     Kmer aux(k);
+    string secuencia_completa;
 
     while (getline(datos, linea)) {
-        aux.procesarLectura(linea);
+        // Salto las lineas de encabezado que empiezan con >
+        if (linea.empty() || linea[0] == '>') {
+            continue;
+        }
+        // Limpieza, quito espacios y valido caracteres
+        for (char& c : linea) {
+            c = toupper(c); // Todo a mayusculas
+            if (c == 'A' || c == 'C' || c == 'G' || c == 'T') {
+                secuencia_completa += c;
+            }
+        }
+        aux.procesarLectura(secuencia_completa);
     }
 
     datos.close();
+
+
 
     cout << "---ESTADO DEL GRAFO DE BRUIJN---" << endl;
     auto dic = aux.getGrafo();
