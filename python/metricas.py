@@ -29,7 +29,7 @@ def calcular_n50(longitudes):
 
     longitudes_ordenadas = sorted(longitudes, reverse=True)
     total = sum(longitudes_ordenadas)
-    mitad = total / 2
+    mitad = total // 2
 
     acumulado = 0
     for l in longitudes_ordenadas:

@@ -8,7 +8,9 @@ EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Elementos de la solución", "Elementos de la solución", "{D107F4C8-89CC-BEA8-D3D7-CA6B7733353D}"
 	ProjectSection(SolutionItems) = preProject
 		python\experimentacion.py = python\experimentacion.py
+		python\fasta.py = python\fasta.py
 		python\metricas.py = python\metricas.py
+		python\visualizacion.py = python\visualizacion.py
 	EndProjectSection
 EndProject
 Global

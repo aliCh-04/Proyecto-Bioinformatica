@@ -6,10 +6,10 @@ from metricas import leer_longitudes_fasta, calcular_metricas
 
 # Config
 RUTA_EJECUTABLE = "x64/Debug/Bio.exe"
-ARCHIVO_ENTRADA = "Bio/secuencias.txt"
+ARCHIVO_ENTRADA = "datos/reads1.fasta"
 CARPETA_RESULTADOS = "resultados"
 
-VALORES_K = [3, 4, 5, 6, 7]
+VALORES_K = [15, 21, 25, 31, 41, 51, 61]
 
 
 def ejecutar_experimentos():

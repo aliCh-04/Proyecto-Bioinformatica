@@ -38,4 +38,18 @@
       <Filter>Archivos de origen</Filter>
     </Text>
   </ItemGroup>
+  <ItemGroup>
+    <None Include="..\data\ecoli.fna">
+      <Filter>Archivos de recursos</Filter>
+    </None>
+    <None Include="..\data\reads1.fq">
+      <Filter>Archivos de recursos</Filter>
+    </None>
+    <None Include="..\data\reads2.fq">
+      <Filter>Archivos de recursos</Filter>
+    </None>
+    <None Include="..\data\reads1.fasta">
+      <Filter>Archivos de recursos</Filter>
+    </None>
+  </ItemGroup>
 </Project>

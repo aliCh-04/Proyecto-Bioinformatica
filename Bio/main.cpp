@@ -9,7 +9,7 @@ using namespace std;
 int main(int argc, char* argv[]) {
 
     if (argc < 4) {
-        cout << "Uso: ./assembler <input> <k> <output>" << endl;
+        cout << "Uso: ./main <input> <k> <output>" << endl;
         cout << "En el Visual Studio, ir a Proyecto -> Propiedades -> Depuración -> Argumentos de comando, y ponerlo ahi." << endl;
         return 1;
     }
@@ -30,18 +30,20 @@ int main(int argc, char* argv[]) {
     string secuencia_completa;
 
     while (getline(datos, linea)) {
-        // Salto las lineas de encabezado que empiezan con >
         if (linea.empty() || linea[0] == '>') {
             continue;
         }
-        // Limpieza, quito espacios y valido caracteres
-        for (char& c : linea) {
-            c = toupper(c); // Todo a mayusculas
+
+        string secuencia_limpia;
+
+        for (char c : linea) {
+            c = toupper(c);
             if (c == 'A' || c == 'C' || c == 'G' || c == 'T') {
-                secuencia_completa += c;
+                secuencia_limpia += c;
             }
         }
-        aux.procesarLectura(secuencia_completa);
+
+        aux.procesarLectura(secuencia_limpia);
     }
 
     datos.close();
@@ -50,20 +52,20 @@ int main(int argc, char* argv[]) {
 
     cout << "---ESTADO DEL GRAFO DE BRUIJN---" << endl;
     auto dic = aux.getGrafo();
-    for (const auto& [nodo, arista] : dic) {
-        cout << "[" << nodo << "] ---> ";
-        for (char letra : arista) {
-            cout << letra << " ";
-        }
-        cout << endl;
-    }
+    //for (const auto& [nodo, arista] : dic) {
+    //    cout << "[" << nodo << "] ---> ";
+    //    for (char letra : arista) {
+    //        cout << letra << " ";
+    //    }
+    //    cout << endl;
+    //}
 
     cout << "---GENERACION DE CONTIGS---" << endl;
     vector<string> contigs = generador(aux.getGrafo());
     cout << "Se han generado un total de : " << contigs.size() << endl;
-    for (int i = 0; i < contigs.size(); i++) {
-        cout << "Contig " << i << ": " << contigs[i] << endl;
-    }
+    //for (int i = 0; i < contigs.size(); i++) {
+    //    cout << "Contig " << i << ": " << contigs[i] << endl;
+    //}
 
     // Guardar contigs en formato FASTA
     ofstream out(outputFile);

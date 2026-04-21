@@ -142,6 +142,12 @@
   <ItemGroup>
     <Text Include="secuencias.txt" />
   </ItemGroup>
+  <ItemGroup>
+    <None Include="..\data\ecoli.fna" />
+    <None Include="..\data\reads1.fasta" />
+    <None Include="..\data\reads1.fq" />
+    <None Include="..\data\reads2.fq" />
+  </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">
   </ImportGroup>
