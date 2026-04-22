@@ -147,6 +147,7 @@
     <None Include="..\data\reads1.fasta" />
     <None Include="..\data\reads1.fq" />
     <None Include="..\data\reads2.fq" />
+    <None Include="..\datos\reads1.fasta" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">

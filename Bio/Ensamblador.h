@@ -6,6 +6,7 @@
 #include <vector>
 #include <unordered_map>
 
+
 using namespace std;
 
 vector<string> generador(unordered_map<string, vector<char>> grafo);

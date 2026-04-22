@@ -6,6 +6,68 @@
 
 using namespace std;
 
+
+void analizarContigs(const vector<string>& contigs, int k) {
+    long long total_bases = 0;
+    long long bases_k_approx = 0;
+    long long bases_100_approx = 0;
+    long long bases_gt_100 = 0;
+    long long bases_gt_500 = 0;
+
+    int count_k_approx = 0;
+    int count_100_approx = 0;
+    int count_gt_100 = 0;
+    int count_gt_500 = 0;
+
+    for (const auto& c : contigs) {
+        int len = c.size();
+        total_bases += len;
+
+        if (len >= k && len <= k + 5) {
+            bases_k_approx += len;
+            count_k_approx++;
+        }
+
+        if (len >= 95 && len <= 105) {
+            bases_100_approx += len;
+            count_100_approx++;
+        }
+
+        if (len > 100) {
+            bases_gt_100 += len;
+            count_gt_100++;
+        }
+
+        if (len > 500) {
+            bases_gt_500 += len;
+            count_gt_500++;
+        }
+    }
+
+    cout << "\n===== ANALISIS DE CONTIGS =====" << endl;
+    cout << "Total bases: " << total_bases << endl;
+
+    cout << "\n--- ~k ---" << endl;
+    cout << "Contigs: " << count_k_approx << endl;
+    cout << "Bases: " << bases_k_approx << endl;
+    cout << "%: " << (double)bases_k_approx / total_bases << endl;
+
+    cout << "\n--- ~100 ---" << endl;
+    cout << "Contigs: " << count_100_approx << endl;
+    cout << "Bases: " << bases_100_approx << endl;
+    cout << "%: " << (double)bases_100_approx / total_bases << endl;
+
+    cout << "\n--- >100 ---" << endl;
+    cout << "Contigs: " << count_gt_100 << endl;
+    cout << "Bases: " << bases_gt_100 << endl;
+    cout << "%: " << (double)bases_gt_100 / total_bases << endl;
+
+    cout << "\n--- >500 ---" << endl;
+    cout << "Contigs: " << count_gt_500 << endl;
+    cout << "Bases: " << bases_gt_500 << endl;
+    cout << "%: " << (double)bases_gt_500 / total_bases << endl;
+}
+
 int main(int argc, char* argv[]) {
 
     if (argc < 4) {
@@ -66,6 +128,18 @@ int main(int argc, char* argv[]) {
     //for (int i = 0; i < contigs.size(); i++) {
     //    cout << "Contig " << i << ": " << contigs[i] << endl;
     //}
+
+    int cortos = 0;
+    int largos = 0;
+    for (auto& c : contigs) {
+        if (c.size() <= k + 2)cortos++;
+        else largos++;
+    }
+    cout << "Largos: " << largos << endl;
+    cout << "Cortos: " << cortos << endl;
+
+    analizarContigs(contigs, k);
+
 
     // Guardar contigs en formato FASTA
     ofstream out(outputFile);
