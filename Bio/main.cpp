@@ -112,8 +112,8 @@ int main(int argc, char* argv[]) {
 
 
 
-    cout << "---ESTADO DEL GRAFO DE BRUIJN---" << endl;
-    auto dic = aux.getGrafo();
+    //cout << "---ESTADO DEL GRAFO DE BRUIJN---" << endl;
+    //auto dic = aux.getGrafo();
     //for (const auto& [nodo, arista] : dic) {
     //    cout << "[" << nodo << "] ---> ";
     //    for (char letra : arista) {
@@ -128,7 +128,7 @@ int main(int argc, char* argv[]) {
     //for (int i = 0; i < contigs.size(); i++) {
     //    cout << "Contig " << i << ": " << contigs[i] << endl;
     //}
-
+    /*
     int cortos = 0;
     int largos = 0;
     for (auto& c : contigs) {
@@ -139,7 +139,55 @@ int main(int argc, char* argv[]) {
     cout << "Cortos: " << cortos << endl;
 
     analizarContigs(contigs, k);
+    */
 
+    cout << "\n--- METRICAS DEL ENSAMBLAJE ---" << endl;
+
+    int total_contigs = contigs.size();
+    long long total_bases = 0;
+    int longitud_maxima = 0;
+
+    // Variables para la distribución
+    int menores_k = 0;
+    int entre_k_y_100 = 0;
+    int entre_100_y_500 = 0;
+    int mayores_500 = 0;
+
+    for (const string& c : contigs) {
+        int len = c.size();
+        total_bases += len;
+
+        // Calcular longitud máxima
+        if (len > longitud_maxima) {
+            longitud_maxima = len;
+        }
+
+        // Distribución de longitudes
+        if (len <= k + 2) {
+            menores_k++; // Contigs muy cortos (ruido o no ensamblados)
+        }
+        else if (len <= 100) {
+            entre_k_y_100++; // Contigs del tamaño de un read
+        }
+        else if (len <= 500) {
+            entre_100_y_500++; // Contigs medianos
+        }
+        else {
+            mayores_500++; // Contigs largos y exitosos
+        }
+    }
+
+    double longitud_media = total_contigs > 0 ? (double)total_bases / total_contigs : 0.0;
+
+    // Imprimir los resultados exactos que pide el profesor
+    cout << "1. Numero total de contigs: " << total_contigs << endl;
+    cout << "2. Longitud maxima: " << longitud_maxima << " pb" << endl;
+    cout << "3. Longitud media: " << longitud_media << " pb" << endl;
+    cout << "4. Distribucion de longitudes:" << endl;
+    cout << "   - Muy cortos (<= K+2): " << menores_k << endl;
+    cout << "   - Tamano read (hasta 100): " << entre_k_y_100 << endl;
+    cout << "   - Medianos (101 - 500): " << entre_100_y_500 << endl;
+    cout << "   - Largos (> 500): " << mayores_500 << endl;
 
     // Guardar contigs en formato FASTA
     ofstream out(outputFile);

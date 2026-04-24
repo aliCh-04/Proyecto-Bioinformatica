@@ -9,7 +9,7 @@ RUTA_EJECUTABLE = "x64/Debug/Bio.exe"
 ARCHIVO_ENTRADA = "datos/reads1.fasta"
 CARPETA_RESULTADOS = "resultados"
 
-VALORES_K = [15, 60, 65, 70, 75, 80, 85, 95]
+VALORES_K = [5, 10, 15, 20, 25, 35, 50, 65, 70, 75, 80, 85, 90]
 
 
 def ejecutar_experimentos():
