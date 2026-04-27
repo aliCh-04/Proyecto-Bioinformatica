@@ -110,25 +110,10 @@ int main(int argc, char* argv[]) {
 
     datos.close();
 
-
-
-    //cout << "---ESTADO DEL GRAFO DE BRUIJN---" << endl;
-    //auto dic = aux.getGrafo();
-    //for (const auto& [nodo, arista] : dic) {
-    //    cout << "[" << nodo << "] ---> ";
-    //    for (char letra : arista) {
-    //        cout << letra << " ";
-    //    }
-    //    cout << endl;
-    //}
-
     cout << "---GENERACION DE CONTIGS---" << endl;
     vector<string> contigs = generador(aux.getGrafo());
     cout << "Se han generado un total de : " << contigs.size() << endl;
-    //for (int i = 0; i < contigs.size(); i++) {
-    //    cout << "Contig " << i << ": " << contigs[i] << endl;
-    //}
-   
+
     int cortos = 0;
     int largos = 0;
     for (auto& c : contigs) {
