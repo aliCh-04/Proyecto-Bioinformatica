@@ -14,7 +14,7 @@ K_FIJO = 51
 ERROR_FIJO = 0.01
 
 # Coberturas 
-COBERTURAS = [10, 20, 25]
+COBERTURAS = [5, 10, 20, 25]
 
 def ejecutar_experimentos():
     resultados = []

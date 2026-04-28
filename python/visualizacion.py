@@ -5,26 +5,27 @@ import os
 RUTA_CSV = "resultados/resultados.csv"
 
 def leer_resultados(ruta):
-    coberturas = []
-    n50s = []
-    contigs = []
-    maximos = []
-    totales = []
+    filas = []
 
     with open(ruta, "r") as f:
         reader = csv.DictReader(f)
         for fila in reader:
-            coberturas.append(int(fila["cobertura"]))
-            n50s.append(int(fila["n50"]))
-            contigs.append(int(fila["num_contigs"]))
-            maximos.append(int(fila["longitud_maxima"]))
-            totales.append(int(fila["longitud_total"]))
+            filas.append((
+                int(fila["cobertura"]),
+                int(fila["n50"]),
+                int(fila["num_contigs"]),
+                int(fila["longitud_maxima"]),
+                int(fila["longitud_total"])
+            ))
 
     # Ordenar por cobertura
-    coberturas, n50s = zip(*sorted(zip(coberturas, n50s)))
-    _, contigs = zip(*sorted(zip(coberturas, contigs)))
-    _, maximos = zip(*sorted(zip(coberturas, maximos)))
-    _, totales = zip(*sorted(zip(coberturas, totales)))
+    filas.sort(key=lambda x: x[0])
+
+    coberturas = [f[0] for f in filas]
+    n50s = [f[1] for f in filas]
+    contigs = [f[2] for f in filas]
+    maximos = [f[3] for f in filas]
+    totales = [f[4] for f in filas]
 
     return coberturas, n50s, contigs, maximos, totales
 
