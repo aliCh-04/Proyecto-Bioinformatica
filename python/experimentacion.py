@@ -12,7 +12,7 @@ CARPETA_RESULTADOS = "resultados"
 RUTA_RESULTADOS = "resultados/resultados.csv"
 
 # Con los mejores valores (41, y 31 y 51) 
-VALORES_K = [31, 41, 51]
+VALORES_K = [41, 51, 61]
 ERRORES = [0, 0.005, 0.01, 0.02]
 
 def ejecutar_experimentos():
@@ -29,7 +29,7 @@ def ejecutar_experimentos():
 
         # Convertir a fasta
         subprocess.run([
-            "python", "fasta.py",
+            "python", "python/fasta.py",
             reads1,
             reads2,
             fasta
