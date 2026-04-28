@@ -1,123 +1,93 @@
 import csv
 import matplotlib.pyplot as plt
 import os
-from collections import defaultdict
 
 RUTA_CSV = "resultados/resultados.csv"
 
 def leer_resultados(ruta):
-    datos = defaultdict(lambda: {
-        "ks": [],
-        "n50": [],
-        "contigs": [],
-        "max": [],
-        "total": []
-    })
+    coberturas = []
+    n50s = []
+    contigs = []
+    maximos = []
+    totales = []
 
     with open(ruta, "r") as f:
         reader = csv.DictReader(f)
         for fila in reader:
-            error = float(fila["error"])
-            datos[error]["ks"].append(int(fila["k"]))
-            datos[error]["n50"].append(int(fila["n50"]))
-            datos[error]["contigs"].append(int(fila["num_contigs"]))
-            datos[error]["max"].append(int(fila["longitud_maxima"]))
-            datos[error]["total"].append(int(fila["longitud_total"]))
+            coberturas.append(int(fila["cobertura"]))
+            n50s.append(int(fila["n50"]))
+            contigs.append(int(fila["num_contigs"]))
+            maximos.append(int(fila["longitud_maxima"]))
+            totales.append(int(fila["longitud_total"]))
 
-    return datos
+    # Ordenar por cobertura
+    coberturas, n50s = zip(*sorted(zip(coberturas, n50s)))
+    _, contigs = zip(*sorted(zip(coberturas, contigs)))
+    _, maximos = zip(*sorted(zip(coberturas, maximos)))
+    _, totales = zip(*sorted(zip(coberturas, totales)))
+
+    return coberturas, n50s, contigs, maximos, totales
 
 
-def graficar(datos):
+def graficar(coberturas, n50s, contigs, maximos, totales):
     os.makedirs("resultados", exist_ok=True)
 
-    errores_ordenados = sorted(datos.keys())
-
-    # Función auxiliar para las gráficas
-    def plot_metric(nombre, key, ylabel, filename):
+    def plot_metric(valores, ylabel, title, filename):
         plt.figure()
+        plt.plot(coberturas, valores, marker='o')
 
-        all_ks = set()
-
-        for error in errores_ordenados:
-            d = datos[error]
-
-            ks = d["ks"]
-            valores = d[key]
-
-            ks, valores = zip(*sorted(zip(ks, valores)))
-            all_ks.update(ks)
-
-            plt.plot(ks, valores, marker='o', label=f"error={error}")
-
-        ks_sorted = sorted(all_ks)
-
-        plt.xlabel("k")
+        plt.xlabel("Cobertura (x)")
         plt.ylabel(ylabel)
-        plt.title(nombre)
+        plt.title(title)
 
-        # eje X ajustado dinámicamente
-        plt.xlim(min(ks_sorted) - 2, max(ks_sorted) + 2)
-        plt.xticks(ks_sorted)
+        plt.xticks(coberturas)
+        plt.xlim(min(coberturas) - 2, max(coberturas) + 2)
 
         plt.ylim(bottom=0)
         plt.grid(True)
-        plt.legend()
         plt.tight_layout()
         plt.savefig(f"resultados/{filename}", dpi=300)
         plt.close()
 
-    # Gráficas individuales
-    plot_metric("k vs N50", "n50", "N50", "k_vs_n50.png")
-    plot_metric("k vs Número de contigs", "contigs", "Número de contigs", "k_vs_contigs.png")
-    plot_metric("k vs Longitud máxima", "max", "Longitud máxima", "k_vs_max.png")
-    plot_metric("k vs Longitud total", "total", "Longitud total", "k_vs_total.png")
+    # Gráficas de cada métrica
+    plot_metric(n50s, "N50", "Cobertura vs N50", "cov_vs_n50.png")
+    plot_metric(contigs, "Número de contigs", "Cobertura vs Número de contigs", "cov_vs_contigs.png")
+    plot_metric(maximos, "Longitud máxima", "Cobertura vs Longitud máxima", "cov_vs_max.png")
+    plot_metric(totales, "Longitud total", "Cobertura vs Longitud total", "cov_vs_total.png")
 
-    # Gráfica con todo
+    # Gráficas todas juntas
     fig, axs = plt.subplots(4, 1, figsize=(8, 16))
 
     metricas = [
-        ("n50", "N50"),
-        ("contigs", "Número de contigs"),
-        ("max", "Longitud máxima"),
-        ("total", "Longitud total")
+        (n50s, "N50"),
+        (contigs, "Número de contigs"),
+        (maximos, "Longitud máxima"),
+        (totales, "Longitud total")
     ]
 
-    all_ks = set()
-    for error in errores_ordenados:
-        all_ks.update(datos[error]["ks"])
-    ks_sorted = sorted(all_ks)
+    for i, (valores, ylabel) in enumerate(metricas):
+        axs[i].plot(coberturas, valores, marker='o')
 
-    for i, (key, ylabel) in enumerate(metricas):
-        for error in errores_ordenados:
-            d = datos[error]
-
-            ks = d["ks"]
-            valores = d[key]
-
-            ks, valores = zip(*sorted(zip(ks, valores)))
-
-            axs[i].plot(ks, valores, marker='o', label=f"e={error}")
-
-        axs[i].set_title(f"k vs {ylabel}")
-        axs[i].set_xlabel("k")
+        axs[i].set_title(f"Cobertura vs {ylabel}")
+        axs[i].set_xlabel("Cobertura (x)")
         axs[i].set_ylabel(ylabel)
 
-        axs[i].set_xlim(min(ks_sorted) - 2, max(ks_sorted) + 2)
-        axs[i].set_xticks(ks_sorted)
+        axs[i].set_xticks(coberturas)
+        axs[i].set_xlim(min(coberturas) - 2, max(coberturas) + 2)
 
         axs[i].set_ylim(bottom=0)
         axs[i].grid(True)
-        axs[i].legend()
 
     plt.tight_layout()
-    plt.savefig("resultados/k_vs_todo.png", dpi=300)
+    plt.savefig("resultados/cov_vs_todo.png", dpi=300)
     plt.close()
 
     print("Gráficas guardadas en carpeta de resultados.")
 
+
 def main():
-    datos = leer_resultados(RUTA_CSV)
-    graficar(datos)
+    coberturas, n50s, contigs, maximos, totales = leer_resultados(RUTA_CSV)
+    graficar(coberturas, n50s, contigs, maximos, totales)
 
 
 if __name__ == "__main__":
