@@ -11,34 +11,49 @@ ARCHIVO_ENTRADA = "datos/reads.fasta"
 CARPETA_RESULTADOS = "resultados"
 RUTA_RESULTADOS = "resultados/resultados.csv"
 
-VALORES_K = [21, 31, 41, 51, 61, 71, 81]
+# Con los mejores valores (41, y 31 y 51) 
+VALORES_K = [31, 41, 51]
+ERRORES = [0, 0.005, 0.01, 0.02]
 
 def ejecutar_experimentos():
     resultados = []
-
-    # Crear carpeta de resultados si no existe
     os.makedirs(CARPETA_RESULTADOS, exist_ok=True)
 
-    for k in VALORES_K:
-        print(f"Ejecutando ensamblador con k = {k}")
+    for error in ERRORES:
+        print(f"\n=== Error {error} ===")
 
-        salida_fasta = f"{CARPETA_RESULTADOS}/contigs_k{k}.fasta"
+        # Generar reads con ese error
+        reads1 = f"datos/reads_e{error}_1.fq"
+        reads2 = f"datos/reads_e{error}_2.fq"
+        fasta = f"datos/reads_e{error}.fasta"
 
-        # Ejecutar el ensamblador en c++
+        # Convertir a fasta
         subprocess.run([
-            RUTA_EJECUTABLE,
-            ARCHIVO_ENTRADA,
-            str(k),
-            salida_fasta
+            "python", "fasta.py",
+            reads1,
+            reads2,
+            fasta
         ])
 
-        # Calcular métricas
-        longitudes = leer_longitudes_fasta(salida_fasta)
-        metricas = calcular_metricas(longitudes)
+        for k in VALORES_K:
+            print(f"Ejecutando k={k} con error={error}")
 
-        # Añadir k a resultados
-        metricas["k"] = k
-        resultados.append(metricas)
+            salida_fasta = f"{CARPETA_RESULTADOS}/contigs_k{k}_e{error}.fasta"
+
+            subprocess.run([
+                RUTA_EJECUTABLE,
+                fasta,
+                str(k),
+                salida_fasta
+            ])
+
+            longitudes = leer_longitudes_fasta(salida_fasta)
+            metricas = calcular_metricas(longitudes)
+
+            metricas["k"] = k
+            metricas["error"] = error
+
+            resultados.append(metricas)
 
     return resultados
 
@@ -47,7 +62,7 @@ def guardar_csv(resultados):
     ruta_csv = f"{CARPETA_RESULTADOS}/resultados.csv"
 
     with open(ruta_csv, "w", newline="") as f:
-        campos = ["k", "num_contigs", "longitud_maxima", "longitud_total", "n50"]
+        campos = ["k", "error", "num_contigs", "longitud_maxima", "longitud_total", "n50"]
         writer = csv.DictWriter(f, fieldnames=campos)
 
         writer.writeheader()
@@ -61,8 +76,8 @@ def main():
     resultados = ejecutar_experimentos()
     guardar_csv(resultados)
 
-    ks, n50s, num_contigs, max_contigs, long_total = leer_resultados(RUTA_RESULTADOS)
-    graficar(ks, n50s, num_contigs, max_contigs, long_total)
+    datos = leer_resultados(RUTA_RESULTADOS)
+    graficar(datos)
 
 
 if __name__ == "__main__":
