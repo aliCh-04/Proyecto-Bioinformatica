@@ -30,23 +30,36 @@ def leer_resultados(ruta):
 def graficar(datos):
     os.makedirs("resultados", exist_ok=True)
 
-    # Función auxiliar para sacar las gráficas
+    errores_ordenados = sorted(datos.keys())
+
+    # Función auxiliar para las gráficas
     def plot_metric(nombre, key, ylabel, filename):
         plt.figure()
 
-        for error, d in datos.items():
-            # ordenar por k
+        all_ks = set()
+
+        for error in errores_ordenados:
+            d = datos[error]
+
             ks = d["ks"]
             valores = d[key]
+
             ks, valores = zip(*sorted(zip(ks, valores)))
+            all_ks.update(ks)
 
             plt.plot(ks, valores, marker='o', label=f"error={error}")
+
+        ks_sorted = sorted(all_ks)
 
         plt.xlabel("k")
         plt.ylabel(ylabel)
         plt.title(nombre)
+
+        # eje X ajustado dinámicamente
+        plt.xlim(min(ks_sorted) - 2, max(ks_sorted) + 2)
+        plt.xticks(ks_sorted)
+
         plt.ylim(bottom=0)
-        plt.xlim(left=0)
         plt.grid(True)
         plt.legend()
         plt.tight_layout()
@@ -69,10 +82,18 @@ def graficar(datos):
         ("total", "Longitud total")
     ]
 
+    all_ks = set()
+    for error in errores_ordenados:
+        all_ks.update(datos[error]["ks"])
+    ks_sorted = sorted(all_ks)
+
     for i, (key, ylabel) in enumerate(metricas):
-        for error, d in datos.items():
+        for error in errores_ordenados:
+            d = datos[error]
+
             ks = d["ks"]
             valores = d[key]
+
             ks, valores = zip(*sorted(zip(ks, valores)))
 
             axs[i].plot(ks, valores, marker='o', label=f"e={error}")
@@ -80,8 +101,11 @@ def graficar(datos):
         axs[i].set_title(f"k vs {ylabel}")
         axs[i].set_xlabel("k")
         axs[i].set_ylabel(ylabel)
+
+        axs[i].set_xlim(min(ks_sorted) - 2, max(ks_sorted) + 2)
+        axs[i].set_xticks(ks_sorted)
+
         axs[i].set_ylim(bottom=0)
-        axs[i].set_xlim(left=0)
         axs[i].grid(True)
         axs[i].legend()
 
@@ -90,7 +114,6 @@ def graficar(datos):
     plt.close()
 
     print("Gráficas guardadas en carpeta de resultados.")
-
 
 def main():
     datos = leer_resultados(RUTA_CSV)
