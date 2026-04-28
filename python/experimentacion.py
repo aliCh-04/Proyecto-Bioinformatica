@@ -7,12 +7,11 @@ from visualizacion import leer_resultados, graficar
 
 # Config
 RUTA_EJECUTABLE = "x64/Debug/Bio.exe"
-ARCHIVO_ENTRADA = "datos/reads1.fasta"
+ARCHIVO_ENTRADA = "datos/reads.fasta"
 CARPETA_RESULTADOS = "resultados"
 RUTA_RESULTADOS = "resultados/resultados.csv"
 
-VALORES_K = [5, 10, 20, 30, 40, 50, 60, 70, 80, 90]
-
+VALORES_K = [21, 31, 41, 51, 61, 71, 81]
 
 def ejecutar_experimentos():
     resultados = []
@@ -62,8 +61,8 @@ def main():
     resultados = ejecutar_experimentos()
     guardar_csv(resultados)
 
-    ks, n50s, num_contigs, max_contigs = leer_resultados(RUTA_RESULTADOS)
-    graficar(ks, n50s, num_contigs, max_contigs)
+    ks, n50s, num_contigs, max_contigs, long_total = leer_resultados(RUTA_RESULTADOS)
+    graficar(ks, n50s, num_contigs, max_contigs, long_total)
 
 
 if __name__ == "__main__":

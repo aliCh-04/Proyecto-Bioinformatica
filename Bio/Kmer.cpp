@@ -7,7 +7,6 @@ Kmer::Kmer(int valorK) {
 void Kmer::procesarLectura(string_view lectura) {
 
 	if (k <= 1 || lectura.length() < k) {
-		cout << "Error: Valor de K no valido o secuencia muy corta." << endl;
 		return;
 	}
 
