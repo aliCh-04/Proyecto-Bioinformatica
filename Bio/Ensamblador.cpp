@@ -42,17 +42,17 @@ vector<string> generador(unordered_map<string, vector<char>> grafo) {
 	vector<string> contigs;
 
 	for (auto& [nodo, aristas] : grafo_limpio) {
-		if (entradas[nodo] == 0 || salidas[nodo] > 1 || entradas[nodo] > 1) { //Hay una bifurcación
+		if (entradas[nodo] == 0 || salidas[nodo] > 1 || entradas[nodo] > 1) { //Hay una bifurcaciï¿½n
 			while (!aristas.empty()) {
 				string n_actual = nodo;	//El nodo con el que estamos trabajando
-				string contig = n_actual;	//El contig que se está formando
+				string contig = n_actual;	//El contig que se estï¿½ formando
 
 				char arista = aristas.back();
 				aristas.pop_back();
 				contig += arista;
 				n_actual = n_actual.substr(1) + arista;
 
-				while (entradas[n_actual] == 1 && salidas[n_actual] == 1) { //Se sigue formando el contig hasta una nueva bifurcación
+				while (entradas[n_actual] == 1 && salidas[n_actual] == 1) { //Se sigue formando el contig hasta una nueva bifurcaciï¿½n
 					if (grafo_limpio[n_actual].empty()) break;
 
 					char siguiente_arista = grafo_limpio[n_actual].back();

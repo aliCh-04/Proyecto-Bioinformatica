@@ -51,8 +51,5 @@
     <None Include="..\data\reads1.fasta">
       <Filter>Archivos de recursos</Filter>
     </None>
-    <None Include="..\datos\reads1.fasta">
-      <Filter>Archivos de origen</Filter>
-    </None>
   </ItemGroup>
 </Project>

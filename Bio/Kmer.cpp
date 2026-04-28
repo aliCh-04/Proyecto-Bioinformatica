@@ -14,9 +14,9 @@ void Kmer::procesarLectura(string_view lectura) {
 	if (lectura.length() >= k) {	//Se desecha los que son menores de k
 		for (int i = 0; i <= lectura.length() - k; i++) {	//Hasta q no queden bloques k
 			string_view kmer = lectura.substr(i, k);
-			string nodo = string(kmer.substr(0, k - 1));	//Se coge todo menos la última letra
-			char arista = kmer.back();	//Se coge el último valor
-			grafo[nodo].push_back(arista);	//Se guarda en el diccionario con clave k -1 letras y valor el de la posición k
+			string nodo = string(kmer.substr(0, k - 1));	//Se coge todo menos la ï¿½ltima letra
+			char arista = kmer.back();	//Se coge el ï¿½ltimo valor
+			grafo[nodo].push_back(arista);	//Se guarda en el diccionario con clave k -1 letras y valor el de la posiciï¿½n k
 		}
 	}
 }
