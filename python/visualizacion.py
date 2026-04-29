@@ -2,7 +2,7 @@ import csv
 import matplotlib.pyplot as plt
 import os
 
-RUTA_CSV = "resultados/resultados.csv"
+RUTA_CSV = "resultados/resultados_dataset.csv"
 
 def leer_resultados(ruta):
     filas = []
@@ -10,85 +10,80 @@ def leer_resultados(ruta):
     with open(ruta, "r") as f:
         reader = csv.DictReader(f)
         for fila in reader:
+            # A número
+            nombre = fila["dataset"]
+            tamaño = float(nombre.replace("mb", ""))
+
             filas.append((
-                int(fila["cobertura"]),
-                int(fila["n50"]),
-                int(fila["num_contigs"]),
-                int(fila["longitud_maxima"]),
-                int(fila["longitud_total"])
+                tamaño,
+                float(fila["tiempo"]),
+                float(fila["memoria_mb"])
             ))
 
-    # Ordenar por cobertura
+    # Ordenar por tamaño
     filas.sort(key=lambda x: x[0])
 
-    coberturas = [f[0] for f in filas]
-    n50s = [f[1] for f in filas]
-    contigs = [f[2] for f in filas]
-    maximos = [f[3] for f in filas]
-    totales = [f[4] for f in filas]
+    tamaños = [f[0] for f in filas]
+    tiempos = [f[1] for f in filas]
+    memorias = [f[2] for f in filas]
 
-    return coberturas, n50s, contigs, maximos, totales
+    return tamaños, tiempos, memorias
 
 
-def graficar(coberturas, n50s, contigs, maximos, totales):
+def graficar(tamaños, tiempos, memorias):
     os.makedirs("resultados", exist_ok=True)
 
-    def plot_metric(valores, ylabel, title, filename):
-        plt.figure()
-        plt.plot(coberturas, valores, marker='o')
+    # Tiempo
+    plt.figure()
+    plt.plot(tamaños, tiempos, marker='o')
+    plt.xlabel("Tamaño del genoma (Mb)")
+    plt.ylabel("Tiempo (s)")
+    plt.title("Tamaño del dataset vs Tiempo de ejecución")
 
-        plt.xlabel("Cobertura (x)")
-        plt.ylabel(ylabel)
-        plt.title(title)
-
-        plt.xticks(coberturas)
-        plt.xlim(min(coberturas) - 2, max(coberturas) + 2)
-
-        plt.ylim(bottom=0)
-        plt.grid(True)
-        plt.tight_layout()
-        plt.savefig(f"resultados/{filename}", dpi=300)
-        plt.close()
-
-    # Gráficas de cada métrica
-    plot_metric(n50s, "N50", "Cobertura vs N50", "cov_vs_n50.png")
-    plot_metric(contigs, "Número de contigs", "Cobertura vs Número de contigs", "cov_vs_contigs.png")
-    plot_metric(maximos, "Longitud máxima", "Cobertura vs Longitud máxima", "cov_vs_max.png")
-    plot_metric(totales, "Longitud total", "Cobertura vs Longitud total", "cov_vs_total.png")
-
-    # Gráficas todas juntas
-    fig, axs = plt.subplots(4, 1, figsize=(8, 16))
-
-    metricas = [
-        (n50s, "N50"),
-        (contigs, "Número de contigs"),
-        (maximos, "Longitud máxima"),
-        (totales, "Longitud total")
-    ]
-
-    for i, (valores, ylabel) in enumerate(metricas):
-        axs[i].plot(coberturas, valores, marker='o')
-
-        axs[i].set_title(f"Cobertura vs {ylabel}")
-        axs[i].set_xlabel("Cobertura (x)")
-        axs[i].set_ylabel(ylabel)
-
-        axs[i].set_xticks(coberturas)
-        axs[i].set_xlim(min(coberturas) - 2, max(coberturas) + 2)
-
-        axs[i].set_ylim(bottom=0)
-        axs[i].grid(True)
-
+    plt.xticks(tamaños)
+    plt.grid(True)
     plt.tight_layout()
-    plt.savefig("resultados/cov_vs_todo.png", dpi=300)
+    plt.savefig("resultados/dataset_vs_tiempo.png", dpi=300)
     plt.close()
 
-    print("Gráficas guardadas en carpeta de resultados.")
+    # Memoria
+    plt.figure()
+    plt.plot(tamaños, memorias, marker='o')
+    plt.xlabel("Tamaño del genoma (Mb)")
+    plt.ylabel("Memoria (MB)")
+    plt.title("Tamaño del dataset vs Uso de memoria")
+
+    plt.xticks(tamaños)
+    plt.grid(True)
+    plt.tight_layout()
+    plt.savefig("resultados/dataset_vs_memoria.png", dpi=300)
+    plt.close()
+
+    # Todo junto
+    fig, axs = plt.subplots(2, 1, figsize=(8, 10))
+
+    axs[0].plot(tamaños, tiempos, marker='o')
+    axs[0].set_title("Tiempo de ejecución")
+    axs[0].set_xlabel("Tamaño (Mb)")
+    axs[0].set_ylabel("Tiempo (s)")
+    axs[0].grid(True)
+
+    axs[1].plot(tamaños, memorias, marker='o')
+    axs[1].set_title("Uso de memoria")
+    axs[1].set_xlabel("Tamaño (Mb)")
+    axs[1].set_ylabel("Memoria (MB)")
+    axs[1].grid(True)
+
+    plt.tight_layout()
+    plt.savefig("resultados/dataset_vs_todo.png", dpi=300)
+    plt.close()
+
+    print("Gráficas de rendimiento guardadas.")
 
 
 def main():
-    coberturas, n50s, contigs, maximos, totales = leer_resultados(RUTA_CSV)
-    graficar(coberturas, n50s, contigs, maximos, totales)
+    tamaños, tiempos, memorias = leer_resultados(RUTA_CSV)
+    graficar(tamaños, tiempos, memorias)
 
 
 if __name__ == "__main__":

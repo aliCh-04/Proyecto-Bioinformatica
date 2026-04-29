@@ -1,32 +1,34 @@
 import subprocess
 import csv
 import os
+import time
+import psutil
 
-from metricas import leer_longitudes_fasta, calcular_metricas
 from visualizacion import leer_resultados, graficar
 
 # Config
 RUTA_EJECUTABLE = "x64/Debug/Bio.exe"
 CARPETA_RESULTADOS = "resultados"
-RUTA_RESULTADOS = "resultados/resultados.csv"
+RUTA_RESULTADOS = "resultados/resultados_dataset.csv"
 
 K_FIJO = 51
-ERROR_FIJO = 0.01
 
-# Coberturas 
-COBERTURAS = [5, 10, 20, 25]
+# Genomas
+DATASETS = {
+    "1mb": ("datos/reads_1mb_1.fq", "datos/reads_1mb_2.fq"),
+    "2mb": ("datos/reads_2mb_1.fq", "datos/reads_2mb_2.fq"),
+    "3mb": ("datos/reads_3mb_1.fq", "datos/reads_3mb_2.fq"),
+    "4.6mb": ("datos/reads_4.6mb_1.fq", "datos/reads_4.6mb_2.fq")
+}
 
 def ejecutar_experimentos():
     resultados = []
     os.makedirs(CARPETA_RESULTADOS, exist_ok=True)
 
-    for cov in COBERTURAS:
-        print(f"\n=== Cobertura {cov}x ===")
+    for nombre, (reads1, reads2) in DATASETS.items():
+        print(f"\n=== Dataset {nombre} ===")
 
-        # Archivos intermedios
-        reads1 = f"datos/reads_cov{cov}_1.fq"
-        reads2 = f"datos/reads_cov{cov}_2.fq"
-        fasta = f"datos/reads_cov{cov}.fasta"
+        fasta = f"datos/reads_{nombre}.fasta"
 
         # Convertir a FASTA
         subprocess.run([
@@ -36,48 +38,85 @@ def ejecutar_experimentos():
             fasta
         ])
 
-        print(f"Ejecutando ensamblador con k={K_FIJO}, cov={cov}")
+        salida_fasta = f"{CARPETA_RESULTADOS}/contigs_{nombre}.fasta"
 
-        salida_fasta = f"{CARPETA_RESULTADOS}/contigs_k{K_FIJO}_cov{cov}.fasta"
+        print(f"Ejecutando ensamblador ({nombre}).....")
 
-        subprocess.run([
+        start = time.perf_counter()
+
+        process = subprocess.Popen([
             RUTA_EJECUTABLE,
             fasta,
             str(K_FIJO),
             salida_fasta
         ])
 
-        longitudes = leer_longitudes_fasta(salida_fasta)
-        metricas = calcular_metricas(longitudes)
+        max_mem = 0
 
-        metricas["k"] = K_FIJO
-        metricas["cobertura"] = cov
+        # Va midiendo la memoria, incluye además subprocesos para ser más preciso
+        while process.poll() is None:
+            try:
+                proc = psutil.Process(process.pid)
 
-        resultados.append(metricas)
+                mem = proc.memory_info().rss
+                for child in proc.children(recursive=True):
+                    mem += child.memory_info().rss
+
+                max_mem = max(max_mem, mem)
+
+            except psutil.NoSuchProcess:
+                pass
+
+            time.sleep(0.1)
+
+        process.wait()
+
+        # Por si el pico de memoria es al final
+        try:
+            proc = psutil.Process(process.pid)
+            mem = proc.memory_info().rss
+            for child in proc.children(recursive=True):
+                mem += child.memory_info().rss
+            max_mem = max(max_mem, mem)
+        except psutil.NoSuchProcess:
+            pass
+
+        end = time.perf_counter()
+        
+        tiempo = end - start
+        memoria_mb = max_mem / (1024 ** 2)
+
+        print(f"[Tiempo] {tiempo:.2f} s")
+        print(f"[Memoria] {memoria_mb:.2f} MB")
+
+        resultados.append({
+            "dataset": nombre,
+            "k": K_FIJO,
+            "tiempo": tiempo,
+            "memoria_mb": memoria_mb
+        })
 
     return resultados
 
 
 def guardar_csv(resultados):
-    ruta_csv = f"{CARPETA_RESULTADOS}/resultados.csv"
-
-    with open(ruta_csv, "w", newline="") as f:
-        campos = ["k", "cobertura", "num_contigs", "longitud_maxima", "longitud_total", "n50"]
+    with open(RUTA_RESULTADOS, "w", newline="") as f:
+        campos = ["dataset", "k", "tiempo", "memoria_mb"]
         writer = csv.DictWriter(f, fieldnames=campos)
 
         writer.writeheader()
         for fila in resultados:
             writer.writerow(fila)
 
-    print(f"Resultados guardados en {ruta_csv}")
+    print(f"Resultados guardados en {RUTA_RESULTADOS}")
 
 
 def main():
     resultados = ejecutar_experimentos()
     guardar_csv(resultados)
 
-    coberturas, n50s, contigs, maximos, totales = leer_resultados(RUTA_RESULTADOS)
-    graficar(coberturas, n50s, contigs, maximos, totales)
+    tamaños, tiempos, memorias = leer_resultados(RUTA_RESULTADOS)
+    graficar(tamaños, tiempos, memorias)
 
 
 if __name__ == "__main__":

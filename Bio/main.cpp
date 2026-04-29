@@ -114,17 +114,6 @@ int main(int argc, char* argv[]) {
     vector<string> contigs = generador(aux.getGrafo());
     cout << "Se han generado un total de : " << contigs.size() << endl;
 
-    int cortos = 0;
-    int largos = 0;
-    for (auto& c : contigs) {
-        if (c.size() <= k + 2)cortos++;
-        else largos++;
-    }
-    cout << "Largos: " << largos << endl;
-    cout << "Cortos: " << cortos << endl;
-
-    analizarContigs(contigs, k);
-
     // Guardar contigs en formato FASTA
     ofstream out(outputFile);
 
