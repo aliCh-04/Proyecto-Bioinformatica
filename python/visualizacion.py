@@ -6,88 +6,65 @@ RUTA_CSV = "resultados/resultados.csv"
 
 def leer_resultados(ruta):
     ks = []
+    filtros = []
     n50s = []
     num_contigs = []
     max_contigs = []
     long_total = []
+    tiempos = []
 
     with open(ruta, "r") as f:
         reader = csv.DictReader(f)
         for fila in reader:
             ks.append(int(fila["k"]))
+            filtros.append(int(fila["filtrar"]))
             n50s.append(int(fila["n50"]))
             num_contigs.append(int(fila["num_contigs"]))
             max_contigs.append(int(fila["longitud_maxima"]))
             long_total.append(int(fila["longitud_total"]))
+            tiempos.append(float(fila["tiempo"]))
 
-    return ks, n50s, num_contigs, max_contigs, long_total
+    return ks, filtros, n50s, num_contigs, max_contigs, long_total, tiempos
 
-def graficar(ks, n50s, num_contigs, max_contigs, long_total):
+def graficar(ks, filtros, n50s, num_contigs, max_contigs, long_total, tiempos):
     os.makedirs("resultados", exist_ok=True)
 
-    # Ordenar por k
-    ks, n50s = zip(*sorted(zip(ks, n50s)))
-    ks, num_contigs = zip(*sorted(zip(ks, num_contigs)))
-    ks, max_contigs = zip(*sorted(zip(ks, max_contigs)))
-    ks, long_total = zip(*sorted(zip(ks, long_total)))
+    def separar_por_filtro(valores):
+        con = [v for v, f in zip(valores, filtros) if f == 1]
+        sin = [v for v, f in zip(valores, filtros) if f == 0]
+        return con, sin
 
-    # Función auxiliar para hacer las gráficas
-    def plot_simple(ks, valores, ylabel, title, filename):
+    n50_con, n50_sin = separar_por_filtro(n50s)
+    contigs_con, contigs_sin = separar_por_filtro(num_contigs)
+    max_con, max_sin = separar_por_filtro(max_contigs)
+    total_con, total_sin = separar_por_filtro(long_total)
+    tiempo_con, tiempo_sin = separar_por_filtro(tiempos)
+
+    labels = ["sin filtrado", "con filtrado"]
+
+    def plot_bar(valores_sin, valores_con, ylabel, filename):
         plt.figure()
-        plt.plot(ks, valores, marker='o')
+        plt.bar(labels, [valores_sin[0], valores_con[0]])
 
-        plt.xlabel("k")
         plt.ylabel(ylabel)
-        plt.title(title)
+        plt.title(ylabel)
+        plt.grid(axis='y')
 
-        # eje X dinámico
-        plt.xlim(min(ks) - 2, max(ks) + 2)
-        plt.xticks(ks)
-
-        plt.ylim(bottom=0)
-        plt.grid(True)
         plt.tight_layout()
         plt.savefig(f"resultados/{filename}", dpi=300)
         plt.close()
 
-    # Gráficas individuales
-    plot_simple(ks, n50s, "N50", "k vs N50", "k_vs_n50.png")
-    plot_simple(ks, num_contigs, "Número de contigs", "k vs Número de contigs", "k_vs_contigs.png")
-    plot_simple(ks, max_contigs, "Longitud máxima", "k vs Longitud máxima", "k_vs_max.png")
-    plot_simple(ks, long_total, "Longitud total", "k vs Longitud total", "k_vs_total.png")
-
-    # Todas las gráficas juntas
-    fig, axs = plt.subplots(4, 1, figsize=(8, 16))
-
-    metricas = [
-        (n50s, "N50"),
-        (num_contigs, "Número de contigs"),
-        (max_contigs, "Longitud máxima"),
-        (long_total, "Longitud total")
-    ]
-
-    for i, (valores, ylabel) in enumerate(metricas):
-        axs[i].plot(ks, valores, marker='o')
-
-        axs[i].set_title(f"k vs {ylabel}")
-        axs[i].set_xlabel("k")
-        axs[i].set_ylabel(ylabel)
-
-        axs[i].set_xlim(min(ks) - 2, max(ks) + 2)
-        axs[i].set_xticks(ks)
-
-        axs[i].set_ylim(bottom=0)
-        axs[i].grid(True)
-
-    plt.tight_layout()
-    plt.savefig("resultados/k_vs_todo.png", dpi=300)
-    plt.close()
+    plot_bar(n50_sin, n50_con, "N50", "n50.png")
+    plot_bar(contigs_sin, contigs_con, "Número de contigs", "contigs.png")
+    plot_bar(max_sin, max_con, "Longitud máxima", "max.png")
+    plot_bar(total_sin, total_con, "Longitud total", "total.png")
+    plot_bar(tiempo_sin, tiempo_con, "Tiempo (s)", "tiempo.png")
 
     print("Gráficas guardadas en carpeta de resultados.")
 
 def main():
-    ks, n50s, num_contigs, max_contigs, long_total = leer_resultados(RUTA_CSV)
-    graficar(ks, n50s, num_contigs, max_contigs, long_total)
+    ks, filtros, n50s, num_contigs, max_contigs, long_total, tiempos = leer_resultados(RUTA_CSV)
+    graficar(ks, filtros, n50s, num_contigs, max_contigs, long_total, tiempos)
 
 
 if __name__ == "__main__":

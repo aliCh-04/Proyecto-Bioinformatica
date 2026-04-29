@@ -71,14 +71,19 @@ void analizarContigs(const vector<string>& contigs, int k) {
 int main(int argc, char* argv[]) {
 
     if (argc < 4) {
-        cout << "Uso: ./main <input> <k> <output>" << endl;
-        cout << "En el Visual Studio, ir a Proyecto -> Propiedades -> Depuración -> Argumentos de comando, y ponerlo ahi." << endl;
+        cout << "Uso: ./main <input> <k> <output> [filtrar=0|1]" << endl;
         return 1;
     }
 
     string inputFile = argv[1];
     int k = stoi(argv[2]);
     string outputFile = argv[3];
+
+    // Nuevo argumento por defecto se filtra
+    bool filtrar = true;
+    if (argc >= 5) {
+        filtrar = stoi(argv[4]) != 0;
+    }
 
     ifstream datos(inputFile);
 
@@ -89,15 +94,11 @@ int main(int argc, char* argv[]) {
 
     string linea;
     Kmer aux(k);
-    string secuencia_completa;
 
     while (getline(datos, linea)) {
-        if (linea.empty() || linea[0] == '>') {
-            continue;
-        }
+        if (linea.empty() || linea[0] == '>') continue;
 
         string secuencia_limpia;
-
         for (char c : linea) {
             c = toupper(c);
             if (c == 'A' || c == 'C' || c == 'G' || c == 'T') {
@@ -111,21 +112,23 @@ int main(int argc, char* argv[]) {
     datos.close();
 
     cout << "---GENERACION DE CONTIGS---" << endl;
-    vector<string> contigs = generador(aux.getGrafo());
+
+    vector<string> contigs = generador(aux.getGrafo(), filtrar);
+
     cout << "Se han generado un total de : " << contigs.size() << endl;
 
     int cortos = 0;
     int largos = 0;
     for (auto& c : contigs) {
-        if (c.size() <= k + 2)cortos++;
+        if (c.size() <= k + 2) cortos++;
         else largos++;
     }
+
     cout << "Largos: " << largos << endl;
     cout << "Cortos: " << cortos << endl;
 
     analizarContigs(contigs, k);
 
-    // Guardar contigs en formato FASTA
     ofstream out(outputFile);
 
     if (!out.is_open()) {

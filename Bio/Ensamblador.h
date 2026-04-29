@@ -10,6 +10,6 @@
 
 using namespace std;
 
-vector<string> generador(unordered_map<string, vector<char>> grafo);
+vector<string> generador(unordered_map<string, vector<char>> grafo, bool filtrar);
 
 #endif
