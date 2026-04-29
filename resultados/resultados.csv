@@ -1,3 +1,3 @@
-k,filtrar,num_contigs,longitud_maxima,longitud_total,n50,tiempo
-51,0,536801,349,38443535,73,628.0105971
-51,1,233653,675,15395552,63,142.13916249999988
+k,num_contigs,longitud_maxima,longitud_total,n50,tiempo,metodo
+31,1237955,701,59245655,43,566.1685494000003,propio
+31,14483,11905,5134021,1599,170.072,velvet
