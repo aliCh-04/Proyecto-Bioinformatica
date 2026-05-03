@@ -8,7 +8,7 @@ https://www.python.org/downloads/
 Abrir Visual Studio -> Hacer click en "Clonar un repositorio" -> Pegar el link del repositorio https://github.com/aliCh-04/Proyecto-Bioinformatica.git en "Ubicación del repositorio" y clonar
 
 3. Abrir la terminal
-Abrir el proyecto clonado -> Hacer click en "Ver" en la barra superior -> Hacer click en "Terminal" entre las opciones que aparecen.
+Abrir el proyecto clonado -> Hacer click en "Ver" en la barra superior -> Hacer click en "Terminal" entre las opciones que aparecen
 
 4. Ejectuar el ensamblador
 Asegúrate de estar en la raíz del proyecto. Por ejemplo, "C:\Users\john\source\repos\Proyecto-Bioinformatica"
