@@ -15,6 +15,8 @@ Asegúrate de estar en la raíz del proyecto. Por ejemplo, "C:\Users\john\source
 
 Desde ahí, compila el proyecto, por ejemplo con la combinación de teclas ctrl + shift + b. Esto debería crear la carpeta x64 en la raíz del proyecto con el ejecutable del ensamblador. 
 
+Recuerda instalar matplotlib, que es una librería necesaria si no lo tienes, ejecutando este comando en la terminal: "pip install matplotlib"
+
 Con los pasos anteriores hechos, ejecuta el comando "python python/experimentacion.py". Esto correrá tanto el ensamblador en c++ como el código en python para exportar y mostrar los resultados del ensamblado. Asegúrate de que la ruta al archivo "experimentacion.py" es la correcta. Si estás en la raíz del proyecto como se indicó antes, será la indica anteriormente en este párrafo. 
 
 Una vez finalice la ejecución, los resultados estarán en la carpeta "resultados". 
